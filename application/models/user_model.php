@@ -159,6 +159,28 @@ class User_model extends CI_Model {
 		
 		return $res->result ();
 	}
+	function getNetworks_IDs($userID) {
+		$qry = "SELECT networkID as ID FROM networkMembership WHERE userID = ? AND isApproved=1";
+		
+		$param = array (
+				$userID
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return $res->result ();
+	}
+	function getPendingNetworkJoins($userID) {
+		$qry = "SELECT networkID as ID FROM networkMembership WHERE userID = ? AND isApproved=0";
+		
+		$param = array (
+				$userID
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return $res->result ();
+	}
 	function putNetworks($userId, $networkIds) {
 		$sql = "INSERT INTO `networkMembership` (`networkID`, `userID`, `accessLevel`, `requestDate`, `approvalDate`, `approvedByUserID`) VALUES (?,?,?,?,?,?);";
 		$date = $this->db->escape ( date ( 'Y-m-d H:i:s' ) );

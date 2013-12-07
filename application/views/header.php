@@ -62,7 +62,7 @@
 					<li><a href="/home/">Home</a></li>
 
 					<li><a href="/friends/">Friends</a></li>
-					<li><a href="#">Networks</a></li>
+					<li><a href="/networks/">Networks</a></li>
 					
 					<?php if($perm_level >= 3){ ?>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"

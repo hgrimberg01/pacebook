@@ -4,6 +4,50 @@ class Network_model extends CI_Model {
 		// Call the Model constructor
 		parent::__construct ();
 	}
+	function getNetwork($networkID) {
+		$sql = "SELECT networkName, networkDesc, networkCreationDate FROM networks WHERE networkID = ? ;";
+		$qry = $this->db->query($sql, array($networkID));
+		$result = $qry->result()[0];
+		// add count information
+		// TODO what if no rows are returned?
+		$numMembers = $this->getNetworkMemberCount($networkID);
+		$result['members'] = $numMembers;
+		return $result;
+	}
+	function getNetworks($networkID_array) {
+		// return information on an array of networks
+		
+		// TODO check if array is valid
+		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
+		$list = str_replace("'", "", implode(", ", $a_map));
+		$sql = "SELECT networks.networkID, networkName AS name, networkDesc, networkCreationDate AS cDate, numMembers FROM networks
+				JOIN (SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID IN ( ".$list." ) GROUP BY networkID) AS Counts
+				ON Counts.networkID=networks.networkID WHERE networkIsActive=1;";
+		// note: do not have to account for networks that do not show up in networkmembership because no user could be a member of them
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
+	function getPendingNetworkJoins($networkID_array) {
+		// return information on pending network join requests
+		
+		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
+		$list = str_replace("'", "", implode(", ", $a_map));
+		$sql = "SELECT networks.networkID, networkName AS name, requestDate AS reqDate FROM networks, networkmembership
+				WHERE networks.networkID IN ( " . $list . " ) AND networks.networkID=networkmembership.networkID;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
+	function getPendingNetworkApprovals($networkID_array) {
+		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
+		$list = str_replace("'", "", implode(", ", $a_map));
+		$sql = "SELECT networkID, networkName AS name, networkCreationDate AS cDate FROM networks
+				WHERE networkID IN ( " . $list . " ) AND networkIsActive=0;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
 	function getAllNetworks() {
 		$sql = "SELECT networkName,networkID from networks;";
 		$res = $this->db->query ( $sql );
@@ -84,7 +128,12 @@ class Network_model extends CI_Model {
 		// number of members in a network
 		$sql = 'SELECT COUNT(*) AS members FROM networkmembership WHERE networkID = ' . $networkID . ';';
 		$query = $this->db->query($sql);
-		return $res->result()[0]->members;
+		return $query->result()[0]->members;
+	}
+	function getNetworkMemberCounts($networkIDs) {
+		$sql = 'SELECT networkID, COUNT(*) AS members FROM networkmembership GROUP BY networkID WHERE networkID IN ( ? )';
+		$query = $this->db->query($sql);
+		return $query->result();
 	}
 	function isApproved($networkID) {
 		// checks whether a network with the given name is approved
