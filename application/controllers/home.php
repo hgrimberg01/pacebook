@@ -2,6 +2,11 @@
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 class Home extends CI_Controller {
+	
+	
+	
+	
+	
 	public function friendLoad() {
 		if (checkAuth ( $this )) {
 			$user_id = $this->session->userdata ( 'logged_in' );

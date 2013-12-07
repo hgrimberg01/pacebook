@@ -120,7 +120,7 @@ class User_model extends CI_Model {
 				'NULL',
 				date ( 'Y-m-d H:i:s' ) 
 		);
-		$res = $this->db - query ( $qry, $param );
+		$res = $this->db->query ( $qry, $param );
 		
 		return;
 	}
@@ -137,11 +137,11 @@ class User_model extends CI_Model {
 		return;
 	}
 	function denyFriendShip($userOne, $userTwo) {
-		$qry = "DELETE FROM `friendship`  WHERE `firstUserId` = ? AND `secondUserId` = ? ;";
+		$qry = "DELETE FROM `friendship`  WHERE `firstUserId` = ? AND `secondUserId` = ? OR `firstUserId` = ? AND `secondUserId` = ?  ;";
 		$param = array (
 				
 				$userOne,
-				$userTwo 
+				$userTwo,$userTwo,$userOne
 		);
 		
 		$res = $this->db->query ( $qry, $param );
@@ -235,7 +235,7 @@ class User_model extends CI_Model {
 					4,
 					$date,
 					$date,
-					5
+					5 
 			);
 		}
 	}
@@ -308,7 +308,7 @@ class User_model extends CI_Model {
 		return;
 	}
 	function getNotFriends($user) {
-		$qry = "SELECT `Users`.`userID` as `uid`, `Users`.`firstName` as `fName`, `Users`.`lastName` as `lName` , `Users`.`userCreationDate` as `cDate` FROM `Users`  WHERE `Users`.`userID` != 5 AND`Users`.`userID` NOT IN (SELECT firstUserId from friendship) AND `Users`.`userID` NOT IN (SELECT secondUserId from friendship) AND  `Users`.`userID` != ?";
+		$qry = "SELECT `Users`.`userID` as `uid`, `Users`.`firstName` as `fName`, `Users`.`lastName` as `lName` , `Users`.`userCreationDate` as `cDate` FROM `Users`  WHERE `Users`.`userID` NOT IN (SELECT firstUserId from friendship) AND `Users`.`userID` NOT IN (SELECT secondUserId from friendship) AND  `Users`.`userID` != ?";
 		$param = array (
 				$user 
 		);

@@ -1,10 +1,22 @@
 <script>
 $(function() {
+
+	$('#sysError').hide();
+	$('#eclose').on('click', function(e){
+	
+		$(this).parent().slideUp(500);
+	});
+
+	
+	$('tr').delegate('#my-alert','close.bs.alert', function () {
+		$(this).closest('tr').hide();
+		});
+
+	
 	$( ".iyes" ).on( "click", function() {
 		var row = $(this).closest('tr');
 		row.fadeOut();
-		approve(row.data('fid'),'i');
-		row.html('<td colspan="3">	<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Confirmed</strong></div></td>');
+		approve(row.data('fid'),'i',row);
 
 
 		row.fadeIn();
@@ -15,8 +27,7 @@ $(function() {
 	$( ".ino" ).on( "click", function() {
 	var row = $(this).closest('tr');
 	row.fadeOut();
-	not_approve(row.data('fid'),'i');
-	row.html('<td colspan="3">	<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Ignored</strong></div></td>');
+	not_approve(row.data('fid'),'i',row);
 
 
 	row.fadeIn();
@@ -27,15 +38,14 @@ $(function() {
 	$('.cncl').on("click",function(){
 		var row = $(this).closest('tr');
 		row.fadeOut();
-		not_approve(row.data('fid'),'o');
-		row.html('<td colspan="3">	<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Ignored</strong></div></td>');
+		not_approve(row.data('fid'),'o',row);
 
 
 		row.fadeIn();
 	});
 });
 	
-function approve(id,dir){
+function approve(id,dir,row){
 
 	var data = {};
 	data.fid = id;
@@ -48,13 +58,19 @@ function approve(id,dir){
 		data: data,
 		complete:function(r,s){
 			console.log(r);
-		}
+		},error:function(jqXHR,  textStatus, errorThrown){
+			console.log(errorThrown);
+			$('#sysError').slideDown(500);
+		},success:function(){
+			row.html('<td colspan="3">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Confirmed</strong></div></td>');
+				
+			}
 
 		});
 	
 }
 
-function not_approve(id,dir){
+function not_approve(id,dir,row){
 
 	var data = {};
 	data.fid = id;
@@ -67,6 +83,13 @@ function not_approve(id,dir){
 		data: data,
 		complete:function(r,s){
 			console.log(r);
+		},
+		error:function(jqXHR,  textStatus, errorThrown){
+			console.log(errorThrown);
+			$('#sysError').slideDown(500);
+		},success:function(){
+			row.html('<td colspan="3">	<div id="my-alert" class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Ignored</strong></div></td>');
+			
 		}
 
 		});
@@ -87,7 +110,13 @@ function hide_outbound(fid) {
 </script>
 
 
-<h2>My Friends <a href="/friends/find"><small>  Find Friends</small></a></h2>
+<h2>
+	My Friends <a href="/friends/find"><small> Find Friends</small></a>
+</h2>
+<div id="sysError" class="alert alert-danger alert-dismissable">
+	<button type="button" class="close" id="eclose" aria-hidden="true">&times;</button>
+	<strong>A system error has occured. Please try again later.</strong>
+</div>
 <div class="row">
 
 	<div class="col-md-6" data-ss-colspan="6">
@@ -114,16 +143,16 @@ function hide_outbound(fid) {
 			<?php  foreach ( $inbound as $iFriend ) { ?>
 				
 				 <tr data-fid="<?php  echo $iFriend->friendID; ?>">
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
+
+
+
+
+
+
+
+
+
+
 							<td><?php  echo $iFriend->fName .' '. $iFriend->lName  ; ?>
 							</td>
 
@@ -246,7 +275,7 @@ function hide_outbound(fid) {
 						<label for="sterm">Search Term</label> <input class="form-control"
 							id="sterm" placeholder="Enter name or email">
 					</div>
-					
+
 					<button type="submit" class="btn btn-default">Submit</button>
 				</form>
 			</div>

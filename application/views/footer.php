@@ -7,24 +7,7 @@
 
 
 
-<script type="text/javascript">
-$(function() {
 
-	$( document ).on( "click", "a.offsite", function() {
-		alert( "Goodbye!" ); // jQuery 1.7+
-		});
-
-
-	$(".container").shapeshift({
-	    minColumns: 3
-	});
-
-	
-});
-
-
-
-</script>
 
 </body>
 </html>
