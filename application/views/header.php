@@ -18,17 +18,25 @@
 <!-- Bootstrap core CSS -->
 
 
+<!--  
 <link
 	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+	rel="stylesheet"> -->
+
+<link href="http://bootswatch.com/cosmo/bootstrap.min.css"
 	rel="stylesheet">
-
-
+<link
+	href="https://raw.github.com/jharding/typeahead.js-bootstrap.css/master/typeahead.js-bootstrap.css"
+	rel="stylesheet">
 
 <script
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script
 	src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
+		
+<script
+	src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.min.js"></script>
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
@@ -37,9 +45,10 @@
 <![endif]-->
 
 <!-- Favicons -->
+<script type="text/javascript">
 
 
-
+</script>
 </head>
 <body>
 	<div class="container">
