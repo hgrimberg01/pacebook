@@ -1,97 +1,69 @@
-<script>
+
+
+
+<script type="text/javascript">
 $(function() {
-	$( ".iyes" ).on( "click", function() {
+
+	
+			
+
+	$('#sysError').hide();
+	$('#eclose').on('click', function(e){
+	
+		$(this).parent().slideUp(500);
+	});
+
+	
+	$('tr').delegate('#my-alert','close.bs.alert', function () {
+		$(this).closest('tr').hide();
+		});
+			
+	
+	$( ".send_invite" ).on( "click", function() {
 		var row = $(this).closest('tr');
+		var data = {};
+		
+		data.fid = row.data('fid');
 		row.fadeOut();
-		approve(row.data('fid'),'i');
-		row.html('<td colspan="3">	<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Confirmed</strong></div></td>');
+		
+		$.ajax({
+			dataType: "json",
+			type: "POST",
+			url: '/friends/add/',
+			data: data,
+			success:function(r,s){
+				row.html('<td colspan="3">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Invite Sent</strong></div></td>');
+				
+			},
+			error:function(jqXHR,  textStatus, errorThrown){
+				console.log(errorThrown);
+				$('#sysError').slideDown(500);
+			}
+			});
 
 
+
+		
 		row.fadeIn();
 		
 		});
 	
 
-	$( ".ino" ).on( "click", function() {
-	var row = $(this).closest('tr');
-	row.fadeOut();
-	not_approve(row.data('fid'),'i');
-	row.html('<td colspan="3">	<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Ignored</strong></div></td>');
-
-
-	row.fadeIn();
-	
-	});
-
-
-	$('.cncl').on("click",function(){
-		var row = $(this).closest('tr');
-		row.fadeOut();
-		not_approve(row.data('fid'),'o');
-		row.html('<td colspan="3">	<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Ignored</strong></div></td>');
-
-
-		row.fadeIn();
-	});
 });
 	
-function approve(id,dir){
-
-	var data = {};
-	data.fid = id;
-	data.dir = dir;
-	
-	$.ajax({
-		dataType: "json",
-		type: "POST",
-		url: '/friends/confirm/',
-		data: data,
-		complete:function(r,s){
-			console.log(r);
-		}
-
-		});
-	
-}
-
-function not_approve(id,dir){
-
-	var data = {};
-	data.fid = id;
-	data.dir = dir;
-	
-	$.ajax({
-		dataType: "json",
-		type: "POST",
-		url: '/friends/deny/',
-		data: data,
-		complete:function(r,s){
-			console.log(r);
-		}
-
-		});
-	
-	
-}
-
-function hide_inbound(fid) {
-
-	
-}
-
-function hide_outbound(fid) {
-
-	
-}
 
 </script>
 
 
 <h2>Find Friends</h2>
 
+<div id="sysError" class="alert alert-danger alert-dismissable">
+	<button id="eclose" type="button" class="close" aria-hidden="true">&times;</button>
+	<strong>A system error has occured. Please try again later.</strong>
+</div>
 
 <div class="row">
-	<div  class="col-md-12 ">
+	<div class="col-md-12 ">
 		<div class="panel panel-default">
 			<div class="panel-heading">All Users</div>
 			<div class="panel-body">
@@ -102,14 +74,15 @@ function hide_outbound(fid) {
 
 							<th>Name</th>
 							<th>Active Since</th>
-							
+
 							<th>Add as friend?</th>
 
 						</tr>
 					</thead>
 					<tbody>
 				<?php if (empty($friends)) {?>
-				<td colspan="12">Either there is nobody or you have friended everybody!</td>
+				<td colspan="12">Either there is nobody or you have friended
+							everybody!</td>
 			
 			<?php } else {?>		
 			<?php  foreach ( $friends as $iFriend ) { ?>
@@ -122,8 +95,8 @@ function hide_outbound(fid) {
 
 							<td><?php  echo date("F d, Y g:i A", strtotime($iFriend->cDate)); ?>
 							</td>
-							
-							<td><a class="cncl">X</a></td>
+
+							<td><a class="send_invite">X</a></td>
 						</tr>
 				
 			 <?php } }?>
@@ -136,6 +109,6 @@ function hide_outbound(fid) {
 		</div>
 	</div>
 
-	<
+
 </div>
 

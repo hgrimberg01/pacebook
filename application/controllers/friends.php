@@ -67,14 +67,14 @@ class Friends extends CI_Controller {
 			}
 			$ret['status'] = '200';
 			if ($this->input->is_ajax_request ()) {
-				return json_encode ( $ret );
+				echo json_encode ( $ret );
 			}else{
 				// Conf. Page
 			}
 		} else {
 			$ret['status'] = '503';
 			if ($this->input->is_ajax_request ()) {
-				return json_encode ( $ret );
+				echo json_encode ( $ret );
 			}else{
 				// Conf. Page
 			}
@@ -104,20 +104,52 @@ class Friends extends CI_Controller {
 			}
 			$ret['status'] = '200';
 			if ($this->input->is_ajax_request ()) {
-				return json_encode ( $ret );
+				echo json_encode ( $ret );
 			}else{
 				// Conf. Page
 			}
 		} else {
 			$ret['status'] = '503';
 			if ($this->input->is_ajax_request ()) {
-				return json_encode ( $ret );
+				echo json_encode ( $ret );
 			}else{
 				// Conf. Page
 			}
 		}
 	}
-	public function ajaxConfirm() {
+	
+	public function add(){
+		$ret = array ();
+		
+		if (checkAuth ( $this )) {
+		
+			$user_id = $this->session->userdata ( 'logged_in' );
+		
+			$uid = $user_id;
+		
+			$fid = $this->input->post ( 'fid' );
+		
+
+		
+			$this->load->model ( 'User_model' );
+			$this->User_model->addFriendship($uid,$fid);
+			
+			
+			$ret['status'] = '200';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		} else {
+			$ret['status'] = '503';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		}
+		
 	}
 	
 	public function find(){

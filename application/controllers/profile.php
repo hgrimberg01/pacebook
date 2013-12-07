@@ -2,15 +2,9 @@
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 class Profile extends CI_Controller {
-	public function index($user) {
-		if (checkAuth ( $this )) {
-			
-			
-			
-			
-		} else {
-			redirect ( '/auth/', 'refresh' );
-		}
+	public function index() {
+	}
+	public function show() {
+		echo  $par = $this->uri->segment(2);
 	}
 }
-?>
