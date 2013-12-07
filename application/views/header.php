@@ -20,9 +20,14 @@
 
 <link
 	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
-	rel="stylesheet"> 
+	rel="stylesheet">
 
 
+
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script
+	src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -56,7 +61,7 @@
 				<ul class="nav navbar-nav">
 					<li><a href="/home/">Home</a></li>
 
-					<li><a href="#">Friends</a></li>
+					<li><a href="/friends/">Friends</a></li>
 					<li><a href="#">Networks</a></li>
 					
 					<?php if($perm_level >= 3){ ?>

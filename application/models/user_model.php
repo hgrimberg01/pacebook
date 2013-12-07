@@ -112,16 +112,41 @@ class User_model extends CI_Model {
 		}
 	}
 	function addFriendShip($userOne, $userTwo) {
+		$qry = "INSERT INTO `friendship` ( `firstUserId` ,`secondUserId` ,`isApproved` ,`approvalDate` ,`creationDate`) VALUES (?,?,?,?,?); ";
+		$param = array (
+				$userOne,
+				$userTwo,
+				'0',
+				'NULL',
+				 date ( 'Y-m-d H:i:s' ) 
+		);
+		$res = $this->db - query ( $qry, $param );
+		
+		return;
 	}
 	function confirmFriendShip($userOne, $userTwo) {
-		$qry = "UPDATE `friendship` SET `isApproved` = 1, approvalDate = ? WHERE firstUserId = ? AND secondUserId = ? ;";
+		$qry = "UPDATE `friendship` SET `isApproved` = 1, approvalDate = ? WHERE `firstUserId` = ? AND `secondUserId` = ? ;";
 		$param = array (
-				$this->db->escape ( date ( 'Y-m-d H:i:s' ) ),
+				date ( 'Y-m-d H:i:s' ) ,
 				$userOne,
 				$userTwo 
 		);
 		
 		$res = $this->db->query ( $qry, $param );
+		
+		return;
+	}
+	function denyFriendShip($userOne, $userTwo) {
+		$qry = "DELETE FROM `friendship`  WHERE `firstUserId` = ? AND `secondUserId` = ? ;";
+		$param = array (
+				
+				$userOne,
+				$userTwo 
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return;
 	}
 	function getNetworks($user) {
 		$qry = "SELECT networks.networkName as name FROM networkMembership NATURAL JOIN networks WHERE userID = ?";
@@ -134,7 +159,7 @@ class User_model extends CI_Model {
 		
 		return $res->result ();
 	}
-	function setNetworks($userId, $networkIds) {
+	function putNetworks($userId, $networkIds) {
 		$sql = "INSERT INTO `networkMembership` (`networkID`, `userID`, `accessLevel`, `requestDate`, `approvalDate`, `approvedByUserID`) VALUES (?,?,?,?,?,?);";
 		$date = $this->db->escape ( date ( 'Y-m-d H:i:s' ) );
 		foreach ( $networkIds as $nid ) {
@@ -150,13 +175,66 @@ class User_model extends CI_Model {
 		}
 		return;
 	}
-	function getFriends($user) {
+	function getApprovedFriends($user) {
 		$qry = "(SELECT friendship.secondUserID as friendID ,
+					 Users.username, Users.firstName as fName, Users.lastName as lName FROM
+					`friendship`,Users WHERE  friendship.firstUserId = ? AND
+					 Users.userId = friendship.secondUserId AND friendship.isApproved = 1 )
+					UNION
+					(SELECT friendship.firstUserID as friendID,
+					 Users.username, Users.firstName as fName, Users.lastName as lName
+					 FROM `friendship`,Users WHERE
+					 friendship.secondUserId = ? AND Users.userId =friendship.firstUserId  AND friendship.isApproved = 1 )";
+		
+		$param = array (
+				
+				$user,
+				$user 
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return $res->result ();
+	}
+	function getOutboundUnapprovedFriends($user) {
+		$qry = "(SELECT friendship.secondUserID as friendID ,
+					 Users.username, Users.firstName as fName, Users.lastName as lName FROM
+					`friendship`,Users WHERE  friendship.firstUserId = ? AND
+					 Users.userId = friendship.secondUserId AND friendship.isApproved = 0 )
+					";
+		
+		$param = array (
+				
+				$user 
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return $res->result ();
+	}
+	function getInboundUnapprovedFriends($user) {
+		$qry = "
+				(SELECT friendship.firstUserID as friendID, friendship.creationDate as cDate,
+				 Users.username, Users.firstName as fName, Users.lastName as lName 
+				 FROM `friendship`,Users WHERE
+				 friendship.secondUserId = ? AND Users.userId =friendship.firstUserId  AND friendship.isApproved = 0)";
+		
+		$param = array (
+				
+				$user 
+		);
+		
+		$res = $this->db->query ( $qry, $param );
+		
+		return $res->result ();
+	}
+	function getFriends($user) {
+		$qry = "(SELECT friendship.secondUserID as friendID , friendship.creationDate as cDate,
 				 Users.username, Users.firstName as fName, Users.lastName as lName FROM 
 				`friendship`,Users WHERE  friendship.firstUserId = ? AND
 				 Users.userId =friendship.secondUserId)
 				UNION
-				(SELECT friendship.firstUserID as friendID,
+				(SELECT friendship.firstUserID as friendID,friendship.creationDate as cDate,
 				 Users.username, Users.firstName as fName, Users.lastName as lName
 				 FROM `friendship`,Users WHERE 
 				 friendship.secondUserId = ? AND Users.userId =friendship.firstUserId)";
