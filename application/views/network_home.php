@@ -26,7 +26,7 @@
 			<?php } else {?>		
 			<?php  foreach ( $currentNetworks as $iNetwork ) { ?>
 				
-				 <tr data-fid="<?php  echo $iNetwork->networkID; ?>">
+				 <tr data-nid="<?php  echo $iNetwork->networkID; ?>">
 							
 							
 							<td><?php  echo $iNetwork->name ; ?>
@@ -35,7 +35,7 @@
 							<td><?php  echo date("F d, Y g:i A", strtotime($iNetwork->cDate)); ?>
 							</td>
 							<td><?php echo $iNetwork->numMembers; ?></td>
-							<td>Leave</td>
+							<td><a class="iLeaveNetwork" href="/networks/leave/<?php echo $iNetwork->networkID; ?>">Leave</a></td>
 						</tr>
 				
 			 <?php } }?>
@@ -70,10 +70,10 @@
 			<?php } else {?>		
 			<?php  foreach ( $networkRequests as $jNetwork ) { ?>
 				
-				 		<tr>
+				 		<tr data-nid="<?php  echo $jNetwork->networkID; ?>">
 							<td><?php echo $jNetwork->name; ?></td>
 							<td><?php echo date("F d, Y g:i A", strtotime($jNetwork->reqDate)); ?></td>
-							<td>Cancel</td>
+							<td><a class="iCancelJoin" href="/networks/leave/<?php echo $jNetwork->networkID; ?>">Cancel</a></td>
 						</tr>
 				
 			 <?php } } ?>
@@ -108,10 +108,10 @@
 			<?php } else {?>		
 			<?php  foreach ( $approveRequests as $aNetwork ) { ?>
 				
-				 		<tr>
+				 		<tr data-nid="<?php  echo $aNetwork->networkID; ?>">
 							<td><?php echo $aNetwork->name; ?></td>
 							<td><?php echo date("F d, Y g:i A", strtotime($aNetwork->cDate)); ?></td>
-							<td>Cancel</td>
+							<td><a class="iCancelNetwork" href="/networks/cancel/<?php echo $aNetwork->networkID; ?>">Cancel</a></td>
 						</tr>
 				
 			 <?php } } ?>

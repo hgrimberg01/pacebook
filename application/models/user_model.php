@@ -197,6 +197,11 @@ class User_model extends CI_Model {
 		}
 		return;
 	}
+	function leaveNetwork($userID, $networkID) {
+		$sql = "DELETE FROM networkMembership WHERE userID= " . $userID . " AND networkID= " . $networkID . ";";
+		$result = $this->db->query($sql);
+		return $result;
+	}
 	function getApprovedFriends($user) {
 		$qry = "(SELECT friendship.secondUserID as friendID ,friendship.creationDate as cDate, friendship.approvalDate as aDate,
 					 Users.username, Users.firstName as fName, Users.lastName as lName FROM

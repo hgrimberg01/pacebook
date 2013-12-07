@@ -16,8 +16,9 @@ class Network_model extends CI_Model {
 	}
 	function getNetworks($networkID_array) {
 		// return information on an array of networks
-		
-		// TODO check if array is valid
+		if (empty($networkID_array)) {
+			return array();
+		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networks.networkID, networkName AS name, networkDesc, networkCreationDate AS cDate, numMembers FROM networks
@@ -31,6 +32,9 @@ class Network_model extends CI_Model {
 	function getPendingNetworkJoins($networkID_array) {
 		// return information on pending network join requests
 		
+		if (empty($networkID_array)) {
+			return array();
+		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networks.networkID, networkName AS name, requestDate AS reqDate FROM networks, networkmembership
@@ -40,6 +44,9 @@ class Network_model extends CI_Model {
 		return $result;
 	}
 	function getPendingNetworkApprovals($networkID_array) {
+		if (empty($networkID_array)) {
+			return array();
+		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networkID, networkName AS name, networkCreationDate AS cDate FROM networks
@@ -132,7 +139,7 @@ class Network_model extends CI_Model {
 	}
 	function getNetworkMemberCounts($networkIDs) {
 		$sql = 'SELECT networkID, COUNT(*) AS members FROM networkmembership GROUP BY networkID WHERE networkID IN ( ? )';
-		$query = $this->db->query($sql);
+		$query = $this->db->query($sql);// TODO fix this
 		return $query->result();
 	}
 	function isApproved($networkID) {

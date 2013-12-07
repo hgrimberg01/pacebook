@@ -45,6 +45,30 @@ class Networks extends CI_Controller {
 			redirect ( '/auth/', 'refresh' );
 		}
 	}
+	public function leave($networkID) {
+		if (checkAuth($this)) {
+			$user_id = $this->session->userdata ( 'logged_in' );
+			$this->load->model('User_model');
+			$this->User_model->leaveNetwork($user_id, $networkID);
+			redirect ( '/networks/', 'refresh' );
+		} else {
+			redirect ( '/auth/', 'refresh' );
+		}
+	}
+	public function cancel($networkID) {
+		// TODO check if has permission to delete the network
+		if (checkAuth($this)) {
+			$user_id = $this->session->userdata ( 'logged_in' );
+			$this->load->model('User_model');
+			$this->User_model->leaveNetwork($user_id, $networkID);
+			$this->load->model('Network_model');
+			$this->Network_model->deleteNetwork($networkID);
+			redirect ( '/networks/', 'refresh' );
+		} else {
+			redirect ( '/auth/', 'refresh' );
+		}
+	}
+	
 	public function add() {
 		if (checkAuth ( $this )) {
 		} else {
