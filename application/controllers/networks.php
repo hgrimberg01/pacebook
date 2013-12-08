@@ -69,6 +69,7 @@ class Networks extends CI_Controller {
 			$user_id = $this->session->userdata ( 'logged_in' );
 			$this->load->model('User_model');
 			$this->User_model->leaveNetwork($user_id, $networkID);
+			// TODO handle network owner leaving
 			redirect ( '/networks/', 'refresh' );
 		} else {
 			redirect ( '/auth/', 'refresh' );
@@ -138,6 +139,105 @@ class Networks extends CI_Controller {
 			$this->User_model->joinNetwork($uid,$nid);
 				
 				
+			$ret['status'] = '200';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		} else {
+			$ret['status'] = '503';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		}
+	}
+	public function manage() {
+		if (checkAuth ( $this )) {
+			$user_id = $this->session->userdata ( 'logged_in' );
+				
+			$this->load->model ( 'User_model' );
+			$this->load->model ( 'Network_model' );
+				
+			$user = $this->User_model->getUser ( $user_id );
+				
+			$name = $user->firstName . " " . $user->lastName;
+			$username = $user->username;
+				
+			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
+				
+			$pending = $this->Network_model->getAllPendingApprovals();
+			$result = array ();
+			$result['networks'] = array();
+			$result['pending'] = $pending;
+				
+			$header ['author'] = $name;
+			$header ['loggedIn'] = true;
+			$header ['title'] = 'Manage Networks - ' . $name;
+			$header ['username'] = $username;
+			$header ['name'] = $name;
+			$header ['perm_level'] = $max_auth;
+				
+			$this->load->view ( 'header', $header );
+			$this->load->view ( 'manage_networks', $result );
+			$this->load->view ( 'footer' );
+		} else {
+			redirect ( '/auth/', 'refresh' );
+		}
+	}
+	public function approve() {
+		$ret = array ();
+		
+		if (checkAuth ( $this )) {
+			// TODO make sure that this user has permission to approve
+			$user_id = $this->session->userdata ( 'logged_in' );
+		
+			$uid = $user_id;
+		
+			$nid = $this->input->post ( 'nid' );
+			$note = ""; // TODO implement notes
+		
+		
+		
+			$this->load->model ( 'Network_model' );
+			$this->Network_model->setApprovalState($nid,true,$note,$uid);
+		
+		
+			$ret['status'] = '200';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		} else {
+			$ret['status'] = '503';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		}
+	}
+	public function deny() {
+		$ret = array ();
+		
+		if (checkAuth ( $this )) {
+			// TODO make sure that this user has permission to deny
+			$user_id = $this->session->userdata ( 'logged_in' );
+		
+			$uid = $user_id;
+		
+			$nid = $this->input->post ( 'nid' );
+			$note = ""; // TODO implement notes
+		
+		
+		
+			$this->load->model ( 'Network_model' );
+			$this->Network_model->setApprovalState($nid,false,$note,$uid);
+		
+		
 			$ret['status'] = '200';
 			if ($this->input->is_ajax_request ()) {
 				echo json_encode ( $ret );

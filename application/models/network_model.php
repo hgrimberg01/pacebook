@@ -72,6 +72,17 @@ class Network_model extends CI_Model {
 		$result = $qry->result();
 		return $result;
 	}
+	function getAllPendingApprovals() {
+		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, networkCreationDate AS cDate, users.userName AS owner
+				FROM networks, networkmembership AS mem, users
+				WHERE networkIsActive=0 AND networks.networkApprovedByUserID IS NULL
+					AND mem.networkID = networks.networkID
+					AND mem.userID = users.userID
+					AND mem.accessLevel=4;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
 	function getAllNetworks() {
 		$sql = "SELECT networkName,networkID from networks;";
 		$res = $this->db->query ( $sql );
@@ -182,28 +193,31 @@ class Network_model extends CI_Model {
 			return false;
 		}
 	}
-	function setApprovalState($networkID, $approved, $note) {
+	function setApprovalState($networkID, $approved, $note, $approver) {
 		if ($approved == true) {
 			// approve network
 			
-			$approve_qry = "UPDATE `networks` SET `networkIsActive` = 1, approvalDate = ? , note = ? , WHERE networkID = ? ;";
+			$approve_qry = "UPDATE `networks` SET `networkIsActive` = 1, networkApprovalDate = ? , note = ? , networkApprovedByUserID = ?  WHERE networkID = ? ;";
 			$param = array (
 				$this->db->escape ( date ( 'Y-m-d H:i:s')),
 				$this->db->escape ($note),
+				$approver,
 				$networkID
 			);
 			
-			$res = $this->db->query($qry, $param);
+			$res = $this->db->query($approve_qry, $param);
 		} else {
 			// de-approve network
 			
-			$disapprove_qry = "UPDATE `networks` SET `networkIsActive` = 0, approvalDate = NULL, note = ? , WHERE networkID = ? ;";
+			$disapprove_qry = "UPDATE `networks` SET `networkIsActive` = 0, networkApprovalDate = NULL, note = ? , networkApprovedByUserID = ?  WHERE networkID = ? ;";
 			$param = array (
 				$this->db->escape($note),
+				$approver,
 				$networkID
 			);
 			
-			$res = $this->db->query($qry, $param);
+			$res = $this->db->query($disapprove_qry, $param);
 		}
+		return $res;
 	}
 }

@@ -79,7 +79,7 @@
 						<ul class="dropdown-menu">
 
 
-							<li><a href="#">Network Management</a></li>
+							<li><a href="/networks/manage/">Network Management</a></li>
 							<li class="divider"></li>
 							<li><a href="#">User Management</a></li>
 							<li class="divider"></li>
