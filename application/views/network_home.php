@@ -97,13 +97,14 @@
 
 							<th>Name</th>
 							<th>Created On</th>
+							<th>Status</th>
 							<th>Cancel?</th>
 
 						</tr>
 					</thead>
 					<tbody>
 			<?php if (empty($approveRequests)) {?>
-				<tr><td colspan="3">You have no networks pending approval.</td></tr>
+				<tr><td colspan="4">You have no networks pending approval.</td></tr>
 			
 			<?php } else {?>		
 			<?php  foreach ( $approveRequests as $aNetwork ) { ?>
@@ -111,6 +112,7 @@
 				 		<tr data-nid="<?php  echo $aNetwork->networkID; ?>">
 							<td><?php echo $aNetwork->name; ?></td>
 							<td><?php echo date("F d, Y g:i A", strtotime($aNetwork->cDate)); ?></td>
+							<td><?php echo $aNetwork->status; ?></td>
 							<td><a class="iCancelNetwork" href="/networks/cancel/<?php echo $aNetwork->networkID; ?>">Cancel</a></td>
 						</tr>
 				

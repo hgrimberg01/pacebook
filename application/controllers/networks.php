@@ -30,6 +30,15 @@ class Networks extends CI_Controller {
 				
 			$result ['currentNetworks'] = $currentNetworks;
 			$result ['networkRequests'] = $networkRequest;
+			
+			foreach ($networkApproveRequests as $req) {
+				if (is_null($req->approver)) {
+					$req->status = "Pending";
+				} else {
+					$req->status = "Denied";
+				}
+			}
+			
 			$result ['approveRequests'] = $networkApproveRequests;
 				
 			$header ['author'] = $name;

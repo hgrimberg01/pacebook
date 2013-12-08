@@ -66,7 +66,8 @@ class Network_model extends CI_Model {
 		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
-		$sql = "SELECT networkID, networkName AS name, networkCreationDate AS cDate FROM networks
+		$sql = "SELECT networkID, networkName AS name, networkCreationDate AS cDate, networkApprovedByUserID AS approver
+				FROM networks
 				WHERE networkID IN ( " . $list . " ) AND networkIsActive=0;";
 		$qry = $this->db->query($sql);
 		$result = $qry->result();
