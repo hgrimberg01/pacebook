@@ -222,7 +222,6 @@ class Networks extends CI_Controller {
 		$ret = array ();
 		
 		if (checkAuth ( $this )) {
-			// TODO make sure that this user has permission to approve/deny
 			$user_id = $this->session->userdata ( 'logged_in' );
 		
 			$uid = $user_id;
@@ -230,17 +229,27 @@ class Networks extends CI_Controller {
 			$nid = $this->input->post ( 'nid' );
 			$note = ""; // TODO implement notes
 		
-		
+			
 		
 			$this->load->model ( 'Network_model' );
-			$this->Network_model->setApprovalState($nid,$approved,$note,$uid);
-		
-		
-			$ret['status'] = '200';
-			if ($this->input->is_ajax_request ()) {
-				echo json_encode ( $ret );
-			}else{
-				// Conf. Page
+			
+			if ($this->User_model->getUserGlobalPermission ( $user_id ) >= 5) {
+				$this->Network_model->setApprovalState($nid,$approved,$note,$uid);
+				
+				
+				$ret['status'] = '200';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
+			} else {
+				$ret['status'] = '503';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
 			}
 		} else {
 			$ret['status'] = '503';
@@ -261,7 +270,6 @@ class Networks extends CI_Controller {
 		$ret = array ();
 		
 		if (checkAuth ( $this )) {
-			// TODO make sure that this user has permission to approve/deny
 			$user_id = $this->session->userdata ( 'logged_in' );
 		
 			$uid = $user_id;
@@ -271,15 +279,25 @@ class Networks extends CI_Controller {
 		
 		
 			$this->load->model ( 'Network_model' );
-			$this->Network_model->setJoinState($nid,$app,$approved,$uid);
-		
-		
-			$ret['status'] = '200';
-			if ($this->input->is_ajax_request ()) {
-				echo json_encode ( $ret );
-			}else{
-				// Conf. Page
+			if ($this->Network_model->isManager($uid,$nid)) {
+				$this->Network_model->setJoinState($nid,$app,$approved,$uid);
+				
+				
+				$ret['status'] = '200';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
+			} else {
+				$ret['status'] = '503';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
 			}
+			
 		} else {
 			$ret['status'] = '503';
 			if ($this->input->is_ajax_request ()) {
@@ -291,22 +309,42 @@ class Networks extends CI_Controller {
 	}
 	public function edit($network_id) {
 		if (checkAuth ( $this )) {
+			$user_id = $this->session->userdata ( 'logged_in' );
+			
+			$this->load->model ( 'User_model' );
+			$this->load->model ( 'Network_model' );
+			
+			$user = $this->User_model->getUser ( $user_id );
+			
+			$name = $user->firstName . " " . $user->lastName;
+			$username = $user->username;
+			
+			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
+			
+			$net = $this->Network_model->getNetwork($network_id);
+			$nName = $net->networkName;
+			
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('networkName' , 'Network Name', 'trim|required|xss_clean|is_unique[Networks.networkName]');
 			$this->form_validation->set_rules('networkDesc', 'Network Description', 'trim|xss_clean');
 			
-			$header ['author'] = ''; // TODO huh?
+			$header ['author'] = $name;
 			$header ['loggedIn'] = true;
-			$header ['title'] = 'Edit Network';
-			$header ['perm_level'] = - 1; // TODO huh?
+			$header ['title'] = 'Manage Network - ' . $nName . ' - ' . $name;
+			$header ['username'] = $username;
+			$header ['name'] = $name;
+			$header ['perm_level'] = $max_auth;
 			$this->load->view ( 'header', $header );
 			
-			$this->load->model('Network_model');
+			$result = array ();
+			$result['network'] = $net;
+			
 			if ($this->form_validation->run() == FALSE) {
-				$this->load->view( 'editNetwork', $network_id);
+				$this->load->view( 'edit_network', $result);
 			} else {
 				// TODO implement this
 			}
+			$this->load->view('footer');
 		} else {
 			redirect ( '/auth/', 'refresh' );
 		}

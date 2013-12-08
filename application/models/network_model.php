@@ -11,7 +11,7 @@ class Network_model extends CI_Model {
 		// add count information
 		// TODO what if no rows are returned?
 		$numMembers = $this->getNetworkMemberCount($networkID);
-		$result['members'] = $numMembers;
+		$result->members = $numMembers;
 		return $result;
 	}
 	function getNetworks($networkID_array) {
@@ -205,14 +205,24 @@ class Network_model extends CI_Model {
 	}
 	function getNetworkMemberCount($networkID) {
 		// number of members in a network
-		$sql = 'SELECT COUNT(*) AS members FROM networkmembership WHERE networkID = ' . $networkID . ';';
+		$sql = 'SELECT COUNT(*) AS members FROM networkmembership WHERE isApproved=1 AND networkID = ' . $networkID . ';';
 		$query = $this->db->query($sql);
 		return $query->result()[0]->members;
 	}
 	function getNetworkMemberCounts($networkIDs) {
-		$sql = 'SELECT networkID, COUNT(*) AS members FROM networkmembership GROUP BY networkID WHERE networkID IN ( ? )';
+		$sql = 'SELECT networkID, COUNT(*) AS members FROM networkmembership WHERE isApproved=1 GROUP BY networkID WHERE networkID IN ( ? )';
 		$query = $this->db->query($sql);// TODO fix this
 		return $query->result();
+	}
+	function isManager($userID, $networkID) {
+		// checks whether the user is a/the manager of the network
+		$check_manager_qry = "SELECT networkID FROM networkmembership WHERE networkID = " . $networkID . " AND userID = " . $userID . " AND accessLevel = 4;";
+		$query = $this->db->query($check_manager_qry);
+		if ($query->num_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		} 
 	}
 	function isApproved($networkID) {
 		// checks whether a network with the given name is approved

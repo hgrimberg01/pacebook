@@ -188,7 +188,7 @@ $(function() {
 							<td><?php  echo $iNetwork->numMembers  ; ?>
 							</td>
 							
-							<td><a class="nEdit">Edit</a></td>
+							<td><a class="nEdit" href="/networks/edit/<?php echo $iNetwork->nid; ?>">Edit</a></td>
 
 							<td><a class="nDelete">Delete</a></td>
 						</tr>
