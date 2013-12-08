@@ -29,6 +29,24 @@ class Network_model extends CI_Model {
 		$result = $qry->result();
 		return $result;
 	}
+	function getNetworksNotIn($networkID_array) {
+		if (empty($networkID_array)) {
+			return array();
+		}
+		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
+		$list = str_replace("'", "", implode(", ", $a_map));
+		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, numMembers, users.userName AS owner
+				FROM networks, networkmembership AS netOwns, users, 
+				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID NOT IN ( ".$list." ) GROUP BY networkID) AS Counts
+				WHERE networkIsActive=1
+					AND Counts.networkID = networks.networkID
+					AND netOwns.networkID=networks.networkID AND netOwns.accessLevel=4
+					AND users.userID=netOwns.userID;";
+		// note: do not have to account for networks that do not show up in networkmembership because no user could be a member of them
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
 	function getPendingNetworkJoins($networkID_array) {
 		// return information on pending network join requests
 		

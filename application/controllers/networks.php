@@ -88,7 +88,7 @@ class Networks extends CI_Controller {
 		}
 	}
 	
-	public function add() {
+	public function join() {
 		if (checkAuth ( $this )) {
 			$user_id = $this->session->userdata ( 'logged_in' );
 			
@@ -99,35 +99,23 @@ class Networks extends CI_Controller {
 			
 			$name = $user->firstName . " " . $user->lastName;
 			$username = $user->username;
+			
 			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
+			
+			$userNetworkIDs = $this->User_model->getAllNetworkIDs($user_id);
+			$networks = $this->Network_model->getNetworksNotIn($userNetworkIDs);
+			$result = array ();
+			$result['networks'] = $networks;
 			
 			$header ['author'] = $name;
 			$header ['loggedIn'] = true;
-			$header ['title'] = 'Networks - ' . $name;
+			$header ['title'] = 'Join Networks - ' . $name;
 			$header ['username'] = $username;
 			$header ['name'] = $name;
 			$header ['perm_level'] = $max_auth;
 			
 			$this->load->view ( 'header', $header );
-			
-			$this->load->library ( 'form_validation' );
-			$this->form_validation->set_rules ( 'nName', 'Network Name', 'trim|required|xss_clean|is_unique[Networks.networkName]' );
-			$this->form_validation->set_rules ( 'NDesc', 'Network Description', 'trim|xss_clean' );
-				
-			if ($this->form_validation->run () == FALSE) {
-				// do nothing, because why are you on this page without a network to add?
-			} else {
-				$nName = $this->input->post ( 'nName' );
-				$nDesc = $this->input->post ( 'nDesc' );
-					
-				// add new network
-				$networkID = $this->Network_model->putNetwork($nName, $nDesc);
-				// add user to new network
-				$this->User_model->setNetworks($user_id, array($networkID));
-				$this->load->view ( 'network_home', $result );
-					
-				redirect ( '/networks/', 'refresh' );
-			}
+			$this->load->view ( 'join_networks', $result );
 			$this->load->view ( 'footer' );
 		} else {
 			redirect ( '/auth/', 'refresh' );
