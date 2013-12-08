@@ -22,7 +22,7 @@ class Network_model extends CI_Model {
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networks.networkID, networkName AS name, networkDesc, networkCreationDate AS cDate, numMembers FROM networks
-				JOIN (SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID IN ( ".$list." ) GROUP BY networkID) AS Counts
+				JOIN (SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID IN ( ".$list." ) AND isApproved=1 GROUP BY networkID) AS Counts
 				ON Counts.networkID=networks.networkID WHERE networkIsActive=1;";
 		// note: do not have to account for networks that do not show up in networkmembership because no user could be a member of them
 		$qry = $this->db->query($sql);
@@ -33,12 +33,28 @@ class Network_model extends CI_Model {
 		// returns all the active networks managed by that user
 		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, networkCreationDate AS cDate, numMembers
 				FROM networks, networkmembership AS mem, 
-				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership GROUP BY networkID) AS Counts
+				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE isApproved=1 GROUP BY networkID) AS Counts
 				WHERE networkIsActive=1
 					AND mem.networkID = networks.networkID
 					AND Counts.networkID = networks.networkID
 					AND mem.userID = " . $user_id . "
 					AND mem.accessLevel=4;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
+	function getManagedJoinRequests($user_id) {
+		// returns all of the join requests for groups managed by that user
+		$sql = "SELECT networks.networkID AS nid, networkName AS name, users.userID AS uid, users.userName AS appName
+				FROM networks, networkmembership AS own, networkmembership AS mem, users
+				WHERE networkIsActive=1
+					AND own.networkID = networks.networkID
+					AND own.userID = " . $user_id . "
+					AND own.accessLevel=4
+					AND mem.networkID = networks.networkID
+					AND mem.isApproved=0
+					AND mem.approvedByUserID IS NULL
+					AND mem.userID = users.userID;";
 		$qry = $this->db->query($sql);
 		$result = $qry->result();
 		return $result;
@@ -51,7 +67,7 @@ class Network_model extends CI_Model {
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, numMembers, users.userName AS owner
 				FROM networks, networkmembership AS netOwns, users, 
-				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID NOT IN ( ".$list." ) GROUP BY networkID) AS Counts
+				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership WHERE networkID NOT IN ( ".$list." ) AND isApproved=1 GROUP BY networkID) AS Counts
 				WHERE networkIsActive=1
 					AND Counts.networkID = networks.networkID
 					AND netOwns.networkID=networks.networkID AND netOwns.accessLevel=4
@@ -231,6 +247,33 @@ class Network_model extends CI_Model {
 				$networkID
 			);
 			
+			$res = $this->db->query($disapprove_qry, $param);
+		}
+		return $res;
+	}
+	function setJoinState($networkID, $applicantID, $approved, $approver) {
+		if ($approved == true) {
+			// approve network
+				
+			$approve_qry = "UPDATE networkmembership SET isApproved = 1, approvalDate = ? , approvedByUserID = ?  WHERE networkID = ? AND userID = ? ;";
+			$param = array (
+					date ( 'Y-m-d H:i:s'),
+					$approver,
+					$networkID,
+					$applicantID
+			);
+				
+			$res = $this->db->query($approve_qry, $param);
+		} else {
+			// de-approve network
+				
+			$disapprove_qry = "UPDATE networkmembership SET isApproved = 0, approvalDate = NULL, approvedByUserID = ?  WHERE networkID = ? AND userID = ? ;";
+			$param = array (
+					$approver,
+					$networkID,
+					$applicantID
+			);
+				
 			$res = $this->db->query($disapprove_qry, $param);
 		}
 		return $res;

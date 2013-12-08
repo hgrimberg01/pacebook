@@ -76,6 +76,66 @@ $(function() {
 		row.fadeIn();
 		
 		});
+
+	$( ".uApprove" ).on( "click", function() {
+		var row = $(this).closest('tr');
+		var data = {};
+		
+		data.nid = row.data('nid');
+		data.app = row.data('uid');
+		row.fadeOut();
+		
+		$.ajax({
+			dataType: "json",
+			type: "POST",
+			url: '/networks/approveJoin/',
+			data: data,
+			success:function(r,s){
+				row.html('<td colspan="5">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Request Accepted. Refresh to update counts.</strong></div></td>');
+				
+			},
+			error:function(jqXHR,  textStatus, errorThrown){
+				console.log(errorThrown);
+				$('#sysError').slideDown(500);
+			}
+			});
+
+
+
+		
+		row.fadeIn();
+		
+		});
+
+	$( ".uDeny" ).on( "click", function() {
+		var row = $(this).closest('tr');
+		var data = {};
+		
+		data.nid = row.data('nid');
+		data.app = row.data('uid');
+		row.fadeOut();
+		
+		$.ajax({
+			dataType: "json",
+			type: "POST",
+			url: '/networks/denyJoin/',
+			data: data,
+			success:function(r,s){
+				row.html('<td colspan="5">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Request Denied</strong></div></td>');
+				
+			},
+			error:function(jqXHR,  textStatus, errorThrown){
+				console.log(errorThrown);
+				$('#sysError').slideDown(500);
+			}
+			});
+
+
+
+		
+		row.fadeIn();
+		
+		});
 	
 
 });
@@ -169,13 +229,13 @@ $(function() {
 			<?php } else {?>		
 			<?php  foreach ( $joinReqs as $req ) { ?>
 				
-				 <tr data-nid="<?php  echo $req->nid ?>">
+				 <tr data-nid="<?php  echo $req->nid ?>" data-uid="<?php echo $req->uid ?>">
 
 
 							<td><?php  echo $req->name  ; ?>
 							</td>
 							
-							<td><?php  echo $req->descr  ; ?>
+							<td><?php  echo $req->appName  ; ?>
 							</td>
 							
 							<td><a class="uApprove">Approve</a> <a class="uDeny">Deny</a></td>

@@ -132,6 +132,7 @@ class Networks extends CI_Controller {
 		}
 	}
 	public function add() {
+		// adds a new network join request
 		$ret = array ();
 		
 		if (checkAuth ( $this )) {
@@ -176,12 +177,16 @@ class Networks extends CI_Controller {
 			$username = $user->username;
 				
 			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
-				
-			$pending = $this->Network_model->getAllPendingApprovals();
+
 			$networks = $this->Network_model->getManagedNetworks( $user_id );
+			
+			$joinReqs = $this->Network_model->getManagedJoinRequests($user_id);
+			
+			$pending = $this->Network_model->getAllPendingApprovals();
+			
 			$result = array ();
 			$result['networks'] = $networks;
-			$result['joinReqs'] = array();
+			$result['joinReqs'] = $joinReqs;
 			$result['pending'] = $pending;
 				
 			$header ['author'] = $name;
@@ -199,10 +204,16 @@ class Networks extends CI_Controller {
 		}
 	}
 	public function approve() {
+		$this->approveDeny(true);
+	}
+	public function deny() {
+		$this->approveDeny(false);
+	}
+	private function approveDeny($approved) {
 		$ret = array ();
 		
 		if (checkAuth ( $this )) {
-			// TODO make sure that this user has permission to approve
+			// TODO make sure that this user has permission to approve/deny
 			$user_id = $this->session->userdata ( 'logged_in' );
 		
 			$uid = $user_id;
@@ -213,7 +224,7 @@ class Networks extends CI_Controller {
 		
 		
 			$this->load->model ( 'Network_model' );
-			$this->Network_model->setApprovalState($nid,true,$note,$uid);
+			$this->Network_model->setApprovalState($nid,$approved,$note,$uid);
 		
 		
 			$ret['status'] = '200';
@@ -231,22 +242,27 @@ class Networks extends CI_Controller {
 			}
 		}
 	}
-	public function deny() {
+	public function approveJoin() {
+		$this->approveDenyJoin(true);
+	}
+	public function denyJoin() {
+		$this->approveDenyJoin(false);
+	}
+	private function approveDenyJoin($approved) {
 		$ret = array ();
 		
 		if (checkAuth ( $this )) {
-			// TODO make sure that this user has permission to deny
+			// TODO make sure that this user has permission to approve/deny
 			$user_id = $this->session->userdata ( 'logged_in' );
 		
 			$uid = $user_id;
 		
 			$nid = $this->input->post ( 'nid' );
-			$note = ""; // TODO implement notes
-		
+			$app = $this->input->post ( 'app' );
 		
 		
 			$this->load->model ( 'Network_model' );
-			$this->Network_model->setApprovalState($nid,false,$note,$uid);
+			$this->Network_model->setJoinState($nid,$app,$approved,$uid);
 		
 		
 			$ret['status'] = '200';
