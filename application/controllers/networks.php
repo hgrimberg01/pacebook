@@ -29,6 +29,15 @@ class Networks extends CI_Controller {
 			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
 				
 			$result ['currentNetworks'] = $currentNetworks;
+			
+			foreach ($networkRequest as $req) {
+				if (is_null($req->approver)) {
+					$req->status = "Pending";
+				} else {
+					$req->status = "Denied";
+				}
+			}
+			
 			$result ['networkRequests'] = $networkRequest;
 			
 			foreach ($networkApproveRequests as $req) {

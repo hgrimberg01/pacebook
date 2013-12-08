@@ -59,6 +59,7 @@
 
 							<th>Name</th>
 							<th>Requested On</th>
+							<th>Status</th>							
 							<th>Cancel?</th>
 
 						</tr>
@@ -73,7 +74,16 @@
 				 		<tr data-nid="<?php  echo $jNetwork->networkID; ?>">
 							<td><?php echo $jNetwork->name; ?></td>
 							<td><?php echo date("F d, Y g:i A", strtotime($jNetwork->reqDate)); ?></td>
-							<td><a class="iCancelJoin" href="/networks/leave/<?php echo $jNetwork->networkID; ?>">Cancel</a></td>
+							<td><?php echo $jNetwork->status; ?></td>
+							<td><a class="iCancelJoin" href="/networks/leave/<?php echo $jNetwork->networkID; ?>">
+							<?php 
+								if ($jNetwork->status == "Pending") {
+									echo "Cancel";
+								} else {
+									echo "Clear";
+								}
+							?>
+							</a></td>
 						</tr>
 				
 			 <?php } } ?>
@@ -113,7 +123,15 @@
 							<td><?php echo $aNetwork->name; ?></td>
 							<td><?php echo date("F d, Y g:i A", strtotime($aNetwork->cDate)); ?></td>
 							<td><?php echo $aNetwork->status; ?></td>
-							<td><a class="iCancelNetwork" href="/networks/cancel/<?php echo $aNetwork->networkID; ?>">Cancel</a></td>
+							<td><a class="iCancelNetwork" href="/networks/cancel/<?php echo $aNetwork->networkID; ?>">
+							<?php 
+								if ($aNetwork->status == "Pending") {
+									echo "Cancel";
+								} else {
+									echo "Clear";
+								}
+							?>
+							</a></td>
 						</tr>
 				
 			 <?php } } ?>

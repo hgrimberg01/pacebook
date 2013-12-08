@@ -84,7 +84,8 @@ class Network_model extends CI_Model {
 		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
-		$sql = "SELECT networks.networkID, networkName AS name, requestDate AS reqDate FROM networks, networkmembership
+		$sql = "SELECT networks.networkID, networkName AS name, requestDate AS reqDate, approvedByUserID AS approver
+				FROM networks, networkmembership
 				WHERE networks.networkID IN ( " . $list . " ) AND networks.networkID=networkmembership.networkID AND networkmembership.userID=" . $userID . ";";
 		$qry = $this->db->query($sql);
 		$result = $qry->result();
