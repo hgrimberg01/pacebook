@@ -111,7 +111,7 @@ $(function() {
 					</thead>
 					<tbody>
 				<?php if (empty($networks)) {?>
-				<td colspan="12">Either there are no networks or you are in every network!</td>
+				<td colspan="12">You are in charge of no networks!</td>
 			
 			<?php } else {?>		
 			<?php  foreach ( $networks as $iNetwork ) { ?>
@@ -131,6 +131,54 @@ $(function() {
 							<td><a class="nEdit">Edit</a></td>
 
 							<td><a class="nDelete">Delete</a></td>
+						</tr>
+				
+			 <?php } }?>
+		
+		  </tbody>
+				</table>
+
+
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<div class="row">
+	<div class="col-md-12 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">Network Join Requests</div>
+			<div class="panel-body">
+
+				<table id="network_list" class="table  table-bordered table-hover">
+					<thead>
+						<tr>
+
+							<th>Network</th>
+							<th>Applicant</th>
+							<th>Approve/Deny?</th>
+
+						</tr>
+					</thead>
+					<tbody>
+				<?php if (empty($joinReqs)) {?>
+				<td colspan="12">Nobody is trying to join one of your networks.</td>
+			
+			<?php } else {?>		
+			<?php  foreach ( $joinReqs as $req ) { ?>
+				
+				 <tr data-nid="<?php  echo $req->nid ?>">
+
+
+							<td><?php  echo $req->name  ; ?>
+							</td>
+							
+							<td><?php  echo $req->descr  ; ?>
+							</td>
+							
+							<td><a class="uApprove">Approve</a> <a class="uDeny">Deny</a></td>
 						</tr>
 				
 			 <?php } }?>

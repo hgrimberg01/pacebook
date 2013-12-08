@@ -178,8 +178,10 @@ class Networks extends CI_Controller {
 			$max_auth = $this->User_model->getUserGlobalPermission ( $user_id );
 				
 			$pending = $this->Network_model->getAllPendingApprovals();
+			$networks = $this->Network_model->getManagedNetworks( $user_id );
 			$result = array ();
-			$result['networks'] = array();
+			$result['networks'] = $networks;
+			$result['joinReqs'] = array();
 			$result['pending'] = $pending;
 				
 			$header ['author'] = $name;

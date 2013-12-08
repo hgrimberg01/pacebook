@@ -29,6 +29,20 @@ class Network_model extends CI_Model {
 		$result = $qry->result();
 		return $result;
 	}
+	function getManagedNetworks($user_id) {
+		// returns all the active networks managed by that user
+		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, networkCreationDate AS cDate, numMembers
+				FROM networks, networkmembership AS mem, 
+				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership GROUP BY networkID) AS Counts
+				WHERE networkIsActive=1
+					AND mem.networkID = networks.networkID
+					AND Counts.networkID = networks.networkID
+					AND mem.userID = " . $user_id . "
+					AND mem.accessLevel=4;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
+	}
 	function getNetworksNotIn($networkID_array) {
 		if (empty($networkID_array)) {
 			return $this->getAllNetworksDetailed();
