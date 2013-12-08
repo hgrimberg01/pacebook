@@ -1,5 +1,5 @@
 
-<h2>My Networks</h2>
+<h2>My Networks <a href="/networks/join"><small> Join Networks</small></a></h2>
 <div class="row">
 
 	<div class="col-md-6">

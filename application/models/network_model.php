@@ -46,7 +46,7 @@ class Network_model extends CI_Model {
 		$result = $qry->result();
 		return $result;
 	}
-	function getPendingNetworkJoins($networkID_array) {
+	function getPendingNetworkJoins($networkID_array, $userID) {
 		// return information on pending network join requests
 		
 		if (empty($networkID_array)) {
@@ -55,7 +55,7 @@ class Network_model extends CI_Model {
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
 		$sql = "SELECT networks.networkID, networkName AS name, requestDate AS reqDate FROM networks, networkmembership
-				WHERE networks.networkID IN ( " . $list . " ) AND networks.networkID=networkmembership.networkID;";
+				WHERE networks.networkID IN ( " . $list . " ) AND networks.networkID=networkmembership.networkID AND networkmembership.userID=" . $userID . ";";
 		$qry = $this->db->query($sql);
 		$result = $qry->result();
 		return $result;

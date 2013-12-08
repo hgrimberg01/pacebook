@@ -32,7 +32,7 @@ $(function() {
 			url: '/networks/add/',
 			data: data,
 			success:function(r,s){
-				row.html('<td colspan="3">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Request Sent</strong></div></td>');
+				row.html('<td colspan="5">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Request Sent</strong></div></td>');
 				
 			},
 			error:function(jqXHR,  textStatus, errorThrown){
@@ -55,7 +55,7 @@ $(function() {
 </script>
 
 
-<h2>Find Friends</h2>
+<h2>Join Networks</h2>
 
 <div id="sysError" class="alert alert-danger alert-dismissable">
 	<button id="eclose" type="button" class="close" aria-hidden="true">&times;</button>

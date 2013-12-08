@@ -20,7 +20,7 @@ class Networks extends CI_Controller {
 			$currentNetworks = $this->Network_model->getNetworks($currentIDs);
 			
 			$pendingIDs = $this->User_model->getPendingNetworkJoins($user_id);
-			$networkRequest = $this->Network_model->getPendingNetworkJoins($pendingIDs);
+			$networkRequest = $this->Network_model->getPendingNetworkJoins($pendingIDs, $user_id);
 			
 			$networkApproveRequests = $this->Network_model->getPendingNetworkApprovals($currentIDs);
 				
@@ -119,6 +119,38 @@ class Networks extends CI_Controller {
 			$this->load->view ( 'footer' );
 		} else {
 			redirect ( '/auth/', 'refresh' );
+		}
+	}
+	public function add() {
+		$ret = array ();
+		
+		if (checkAuth ( $this )) {
+		
+			$user_id = $this->session->userdata ( 'logged_in' );
+		
+			$uid = $user_id;
+		
+			$nid = $this->input->post ( 'nid' );
+		
+		
+		
+			$this->load->model ( 'User_model' );
+			$this->User_model->joinNetwork($uid,$nid);
+				
+				
+			$ret['status'] = '200';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
+		} else {
+			$ret['status'] = '503';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
 		}
 	}
 	public function edit($network_id) {

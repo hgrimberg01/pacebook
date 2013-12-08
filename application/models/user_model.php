@@ -209,6 +209,21 @@ class User_model extends CI_Model {
 		}
 		return;
 	}
+	function joinNetwork($userID, $networkID) {
+		$sql = "INSERT INTO `networkMembership` (`networkID`, `userID`, `accessLevel`, `requestDate`, `approvalDate`, `approvedByUserID`, `isApproved`) VALUES (?,?,?,?,?,?,?);";
+		$date = date ( 'Y-m-d H:i:s' );
+		$params = array (
+				$networkID,
+				$userID,
+				1,
+				$date,
+				NULL,
+				NULL,
+				0
+		);
+		$result = $this->db->query ( $sql, $params );
+		return $result;
+	}
 	function leaveNetwork($userID, $networkID) {
 		$sql = "DELETE FROM networkMembership WHERE userID= " . $userID . " AND networkID= " . $networkID . ";";
 		$result = $this->db->query($sql);
