@@ -60,7 +60,7 @@ class Network_model extends CI_Model {
 		$res = $this->db->query ( $sql );
 		return $res->result ();
 	}
-	function putNetwork($nName, $nDesc, $nProfileImgID) {
+	function putNetwork($nName, $nDesc) {
 		$cleaned_nName = $this->db->escape($nName);
 		$check_network_exists_qry = 'SELECT networkName FROM Networks WHERE networkName = ' . $cleaned_nName . ';';
 		
@@ -78,7 +78,7 @@ class Network_model extends CI_Model {
 					`networkProfileImgID`, `networkIsActive`, `networkApprovalDate`,
 					`networkApprovedByUserID`, `Note`)
 					VALUES (
-					NULL, ". $cleaned_nName .", " . $cleaned_desc . ", " . $datetime . ",
+					NULL, ". $cleaned_nName .", " . $cleaned_desc . ", " . $dateTime . ",
 					NULL, 0, NULL,
 					NULL, NULL)
 					";

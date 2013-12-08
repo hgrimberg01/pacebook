@@ -182,7 +182,7 @@ class User_model extends CI_Model {
 		return $res->result ();
 	}
 	function putNetworks($userId, $networkIds) {
-		$sql = "INSERT INTO `networkMembership` (`networkID`, `userID`, `accessLevel`, `requestDate`, `approvalDate`, `approvedByUserID`) VALUES (?,?,?,?,?,?);";
+		$sql = "INSERT INTO `networkMembership` (`networkID`, `userID`, `accessLevel`, `requestDate`, `approvalDate`, `approvedByUserID`, `isApproved`) VALUES (?,?,?,?,?,?,?);";
 		$date = $this->db->escape ( date ( 'Y-m-d H:i:s' ) );
 		foreach ( $networkIds as $nid ) {
 			$params = array (
@@ -191,7 +191,8 @@ class User_model extends CI_Model {
 					4,
 					$date,
 					$date,
-					5 
+					5,
+					1
 			);
 			$this->db->query ( $sql, $params );
 		}
@@ -238,6 +239,7 @@ class User_model extends CI_Model {
 					5 
 			);
 		}
+		// TODO this doesn't work. You never send the query.
 	}
 	function getOutboundUnapprovedFriends($user) {
 		$qry = "(SELECT friendship.secondUserID as friendID , friendship.creationDate as cDate,

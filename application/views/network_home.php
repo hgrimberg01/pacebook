@@ -124,38 +124,21 @@
 		</div>
 	</div>
 	
-	<div class="col-md-6">
+	<div class="col-md-4">
 		<div class="panel panel-default">
-			<div class="panel-heading">Create New Network</div>
+			<div class="panel-heading">Create a Network</div>
 			<div class="panel-body">
+				<div class="row"></div>
+				<form role="form" action="/networks/" method="POST">
+					<div class="form-group">
+						<label for="nName">Network Name</label> <input class="form-control"
+							id="nName" name="nName" placeholder="Enter network name">
+						<label for="nDesc">Network Description</label> <input class="form-control"
+							id="nDesc" name="nDesc" placeholder="Enter network description">
+					</div>
 
-				<table id="network_create_panel" class="table  table-bordered table-hover">
-					<thead>
-						<tr>
-
-							<th>Name</th>
-							<th>Created On</th>
-
-						</tr>
-					</thead>
-					<tbody>
-			<?php if (empty($approveRequests)) {?>
-				<tr><td colspan="2">You have no networks pending approval.</td></tr>
-			
-			<?php } else {?>		
-			<?php  foreach ( $approveRequests as $aNetwork ) { ?>
-				
-				 		<tr>
-							<td><?php echo $aNetwork->name; ?></td>
-							<td><?php echo date("F d, Y g:i A", strtotime($aNetwork->cDate)); ?></td>
-						</tr>
-				
-			 <?php } } ?>
-		
-		  </tbody>
-				</table>
-
-
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
 			</div>
 		</div>
 	</div>
