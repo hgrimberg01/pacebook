@@ -31,7 +31,7 @@ class Network_model extends CI_Model {
 	}
 	function getNetworksNotIn($networkID_array) {
 		if (empty($networkID_array)) {
-			return array();
+			return $this->getAllNetworksDetailed();
 		}
 		$a_map = array_map(function($obj) { return $obj->ID;}, $networkID_array);
 		$list = str_replace("'", "", implode(", ", $a_map));
@@ -42,7 +42,6 @@ class Network_model extends CI_Model {
 					AND Counts.networkID = networks.networkID
 					AND netOwns.networkID=networks.networkID AND netOwns.accessLevel=4
 					AND users.userID=netOwns.userID;";
-		// note: do not have to account for networks that do not show up in networkmembership because no user could be a member of them
 		$qry = $this->db->query($sql);
 		$result = $qry->result();
 		return $result;
@@ -77,6 +76,18 @@ class Network_model extends CI_Model {
 		$sql = "SELECT networkName,networkID from networks;";
 		$res = $this->db->query ( $sql );
 		return $res->result ();
+	}
+	function getAllNetworksDetailed() {
+		$sql = "SELECT networks.networkID AS nid, networkName AS name, networkDesc AS descr, numMembers, users.userName AS owner
+				FROM networks, networkmembership AS netOwns, users,
+				(SELECT networkID, COUNT(*) AS numMembers FROM networkmembership GROUP BY networkID) AS Counts
+				WHERE networkIsActive=1
+					AND Counts.networkID = networks.networkID
+					AND netOwns.networkID=networks.networkID AND netOwns.accessLevel=4
+					AND users.userID=netOwns.userID;";
+		$qry = $this->db->query($sql);
+		$result = $qry->result();
+		return $result;
 	}
 	function putNetwork($nName, $nDesc) {
 		$cleaned_nName = $this->db->escape($nName);
