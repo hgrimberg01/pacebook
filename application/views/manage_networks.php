@@ -17,6 +17,35 @@ $(function() {
 	$('tr').delegate('#my-alert','close.bs.alert', function () {
 		$(this).closest('tr').hide();
 		});
+
+	$( ".nDelete" ).on( "click", function() {
+		var row = $(this).closest('tr');
+		var data = {};
+		
+		data.nid = row.data('nid');
+		row.fadeOut();
+		
+		$.ajax({
+			dataType: "json",
+			type: "POST",
+			url: '/networks/delete/',
+			data: data,
+			success:function(r,s){
+				row.html('<td colspan="5">	<div id="my-alert" class="alert alert-success alert-dismissable"><button type="button"  class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>Network Deleted</strong></div></td>');
+				
+			},
+			error:function(jqXHR,  textStatus, errorThrown){
+				console.log(errorThrown);
+				$('#sysError').slideDown(500);
+			}
+			});
+
+
+
+		
+		row.fadeIn();
+		
+		});
 			
 	
 	$( ".nApprove" ).on( "click", function() {

@@ -345,7 +345,6 @@ class Networks extends CI_Controller {
 			if ($this->form_validation->run() == FALSE) {
 				$this->load->view( 'edit_network', $result);
 			} else {
-				// TODO implement this
 				// make sure that the name is not a duplicate
 		
 				$newName = $this->input->post ( 'nName' );
@@ -363,6 +362,45 @@ class Networks extends CI_Controller {
 			$this->load->view('footer');
 		} else {
 			redirect ( '/auth/', 'refresh' );
+		}
+	}
+	public function delete() {
+		$ret = array ();
+		
+		if (checkAuth ( $this )) {
+			$user_id = $this->session->userdata ( 'logged_in' );
+		
+			$uid = $user_id;
+
+			$nid = $this->input->post ( 'nid' );
+		
+			$this->load->model ( 'Network_model' );
+			if ($this->Network_model->isManager($uid,$nid)) {
+				$this->Network_model->deleteNetwork($nid);
+		
+		
+				$ret['status'] = '200';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
+			} else {
+				$ret['status'] = '503';
+				if ($this->input->is_ajax_request ()) {
+					echo json_encode ( $ret );
+				}else{
+					// Conf. Page
+				}
+			}
+				
+		} else {
+			$ret['status'] = '503';
+			if ($this->input->is_ajax_request ()) {
+				echo json_encode ( $ret );
+			}else{
+				// Conf. Page
+			}
 		}
 	}
 }

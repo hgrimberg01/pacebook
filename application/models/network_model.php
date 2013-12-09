@@ -255,7 +255,7 @@ class Network_model extends CI_Model {
 			
 			$approve_qry = "UPDATE `networks` SET `networkIsActive` = 1, networkApprovalDate = ? , note = ? , networkApprovedByUserID = ?  WHERE networkID = ? ;";
 			$param = array (
-				$this->db->escape ( date ( 'Y-m-d H:i:s')),
+				date ( 'Y-m-d H:i:s'),
 				$this->db->escape ($note),
 				$approver,
 				$networkID
