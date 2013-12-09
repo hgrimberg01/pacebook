@@ -1,6 +1,7 @@
 <?php
 class Auth extends CI_Controller {
 	public function index() {
+		$this->output->cache(5);
 		if (checkAuth ( $this )) {
 			redirect ( '/home/', 'refresh' );
 		} else {
@@ -53,11 +54,12 @@ class Auth extends CI_Controller {
 		redirect ( '/auth/', 'refresh' );
 	}
 	public function register() {
+		$this->output->cache(5);
 		$this->load->library ( 'form_validation' );
-		$this->form_validation->set_rules ( 'username', 'Username', 'trim|required|xss_clean|is_unique[Users.userName]' );
+		$this->form_validation->set_rules ( 'username', 'Username', 'trim|required|xss_clean|is_unique[users.userName]' );
 		$this->form_validation->set_rules ( 'password', 'Password', 'trim|required|xss_clean' );
 		$this->form_validation->set_rules ( 'password2', 'Password Confirmation', 'trim|required|xss_clean|matches[password]' );
-		$this->form_validation->set_rules ( 'email', 'E-Mail', 'trim|required|xss_clean|valid_email|is_unique[Users.userEmail]' );
+		$this->form_validation->set_rules ( 'email', 'E-Mail', 'trim|required|xss_clean|valid_email|is_unique[users.userEmail]' );
 		$this->form_validation->set_rules ( 'firstName', 'First Name', 'trim|required|xss_clean' );
 		$this->form_validation->set_rules ( 'lastName', 'Last Name', 'trim|required|xss_clean' );
 		

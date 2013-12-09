@@ -147,7 +147,7 @@ class Network_model extends CI_Model {
 	}
 	function putNetwork($nName, $nDesc) {
 		$cleaned_nName = $this->db->escape($nName);
-		$check_network_exists_qry = 'SELECT networkName FROM Networks WHERE networkName = ' . $cleaned_nName . ';';
+		$check_network_exists_qry = 'SELECT networkname FROM networks WHERE networkName = ' . $cleaned_nName . ';';
 		
 		$query = $this->db->query($check_network_exists_qry);
 		if ($query->num_rows() > 0) {
@@ -158,7 +158,7 @@ class Network_model extends CI_Model {
 			// no support for profile images currently exists
 			$dateTime = $this->db->escape( date('Y-m-d H:i:s'));
 			
-			$new_database_qry = "INSERT INTO `qchen`.`Networks` (
+			$new_database_qry = "INSERT INTO `qchen`.`networks` (
 					`networkID`, `networkName`, `networkDesc`, `networkCreationDate`,
 					`networkProfileImgID`, `networkIsActive`, `networkApprovalDate`,
 					`networkApprovedByUserID`, `Note`)

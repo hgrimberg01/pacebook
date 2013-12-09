@@ -59,7 +59,7 @@ class Networks extends CI_Controller {
 				
 			$this->load->view ( 'header', $header );
 			$this->load->library ( 'form_validation' );
-			$this->form_validation->set_rules ( 'nName', 'Network Name', 'trim|required|xss_clean|is_unique[Networks.networkName]' );
+			$this->form_validation->set_rules ( 'nName', 'Network Name', 'trim|required|xss_clean|is_unique[networks.networkName]' );
 			$this->form_validation->set_rules ( 'NDesc', 'Network Description', 'trim|xss_clean' );
 				
 			if ($this->form_validation->run () == FALSE) {
