@@ -323,10 +323,13 @@ class Networks extends CI_Controller {
 			
 			$net = $this->Network_model->getNetwork($network_id);
 			$nName = $net->networkName;
+			$net->nid = $network_id;
+			
+			// TODO make sure user is allowed to edit
 			
 			$this->load->library('form_validation');
-			$this->form_validation->set_rules('networkName' , 'Network Name', 'trim|required|xss_clean|is_unique[Networks.networkName]');
-			$this->form_validation->set_rules('networkDesc', 'Network Description', 'trim|xss_clean');
+			$this->form_validation->set_rules('nName' , 'Network Name', 'trim|required|xss_clean]');
+			$this->form_validation->set_rules('nDesc', 'Network Description', 'trim|xss_clean');
 			
 			$header ['author'] = $name;
 			$header ['loggedIn'] = true;
@@ -343,6 +346,19 @@ class Networks extends CI_Controller {
 				$this->load->view( 'edit_network', $result);
 			} else {
 				// TODO implement this
+				// make sure that the name is not a duplicate
+		
+				$newName = $this->input->post ( 'nName' );
+				$newDesc = $this->input->post ( 'nDesc' );
+			
+				$dup = $this->Network_model->getNetworkByName($name);
+				if ($dup <> $network_id && !is_null($dup)) {
+					// error, duplicate name
+					$this->load->view( 'edit_network', $result);
+				} else {
+					$this->Network_model->updateNetwork($network_id, $newName, $newDesc);
+					redirect('/networks/manage/', 'refresh');
+				}
 			}
 			$this->load->view('footer');
 		} else {

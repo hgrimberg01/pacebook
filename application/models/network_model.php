@@ -7,12 +7,25 @@ class Network_model extends CI_Model {
 	function getNetwork($networkID) {
 		$sql = "SELECT networkName, networkDesc, networkCreationDate FROM networks WHERE networkID = ? ;";
 		$qry = $this->db->query($sql, array($networkID));
-		$result = $qry->result()[0];
-		// add count information
-		// TODO what if no rows are returned?
-		$numMembers = $this->getNetworkMemberCount($networkID);
-		$result->members = $numMembers;
-		return $result;
+		if ($qry->num_rows() > 0) {
+			$result = $qry->result()[0];
+			// add count information
+			$numMembers = $this->getNetworkMemberCount($networkID);
+			$result->members = $numMembers;
+			return $result;
+		} else {
+			return null;
+		}
+	}
+	function getNetworkByName($networkName) {
+	$sql = "SELECT networkName, networkDesc, networkCreationDate FROM networks WHERE networkName = ? ;";
+		$qry = $this->db->query($sql, array($networkName));
+		if ($qry->num_rows() > 0) {
+			$result = $qry->result()[0];
+			return $result;
+		} else {
+			return null;
+		}
 	}
 	function getNetworks($networkID_array) {
 		// return information on an array of networks
@@ -179,10 +192,11 @@ class Network_model extends CI_Model {
 		} else {
 			$sql = "UPDATE `networks` SET networkName = ? , networkDesc = ? WHERE networkID = ? ;";
 			$param = array (
-				$cleaned_nName,
-				$this->db->escape($nDesc),
+				$nName,
+				$nDesc,
 				$networkID
 			);
+			$result = $this->db->query($sql, $param);
 		}
 	}
 	function getTotalCount() {
