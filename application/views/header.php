@@ -71,7 +71,7 @@
 					<li><a href="/home/">Home</a></li>
 
 					<li><a href="/friends/">Friends</a></li>
-					<li><a href="#">Networks</a></li>
+					<li><a href="/networks/">Networks</a></li>
 					
 					<?php if($perm_level >= 3){ ?>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
@@ -79,7 +79,7 @@
 						<ul class="dropdown-menu">
 
 
-							<li><a href="#">Network Management</a></li>
+							<li><a href="/networks/manage/">Network Management</a></li>
 							<li class="divider"></li>
 							<li><a href="#">User Management</a></li>
 							<li class="divider"></li>
